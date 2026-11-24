@@ -40,8 +40,10 @@ const demoData: DataSet = {
     { id: "s3", name: "Camila Rocha", phone: "62993334455", enrollment_code: "RL-003", class_id: "c2", plan: "1x por semana", monthly_fee_cents: 15000, due_day: 5, status: "paused", pause_until: "2026-12-01" },
   ],
   classes: [
-    { id: "c1", name: "Areia 1", level: "Intermediário", weekdays: [2, 4], starts_at: "18:00", capacity: 12, active: true },
-    { id: "c2", name: "Areia 2", level: "Iniciante", weekdays: [1, 3, 5], starts_at: "19:00", capacity: 10, active: true },
+    { id: "c1", name: "Aprendiz Mista", level: "Aprendiz", weekdays: [], starts_at: "", capacity: 0, active: true },
+    { id: "c2", name: "Iniciante Mista", level: "Iniciante", weekdays: [], starts_at: "", capacity: 0, active: true },
+    { id: "c3", name: "Iniciante Masculino", level: "Iniciante", weekdays: [], starts_at: "", capacity: 0, active: true },
+    { id: "c4", name: "Feminino Avançado", level: "Avançado", weekdays: [], starts_at: "", capacity: 0, active: true },
   ],
   charges: [
     { id: "ch1", student_id: "s1", competence: todayInGoiania().slice(0, 7) + "-01", amount_cents: 22000, due_date: todayInGoiania() },
@@ -578,7 +580,7 @@ export default function App() {
       ]),
       ...reportClasses.map((item) => {
         const count = activeStudents.filter((student) => student.class_id === item.id && student.status === "active").length;
-        return ["Ocupação", item.name, item.level, "", "", "", `${count}/${item.capacity}`];
+        return ["Ocupação", item.name, item.level, "", "", "", item.capacity > 0 ? `${count}/${item.capacity}` : ""];
       }),
     ];
     const csv = rows.map((row) => row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(";")).join("\r\n");
@@ -836,7 +838,7 @@ function StudentPortal({ student, data, onLogout }: { student?: Student; data: D
       <p className="portal-date">{new Intl.DateTimeFormat("pt-BR", { dateStyle: "full", timeZone: "America/Sao_Paulo" }).format(new Date())}</p>
       <div className="portal-grid">
         <section className="panel-card"><div className="panel-heading"><div><h3><CalendarDays size={18} />Seus horários</h3><p>Turma, dias e horário das aulas</p></div></div>
-          {classRow ? <div className="portal-class"><strong>{classRow.name}</strong><span>{classRow.level}</span><b>{classRow.weekdays.map((day) => dayLabels[day]).join(", ")} · {classRow.starts_at.slice(0, 5)}</b></div> : <EmptyState title="Turma não vinculada" text="Fale com o professor para confirmar seus horários." />}
+          {classRow ? <div className="portal-class"><strong>{classRow.name}</strong><span>{classRow.level}</span><b>{classRow.weekdays.length > 0 && classRow.starts_at ? `${classRow.weekdays.map((day) => dayLabels[day]).join(", ")} · ${classRow.starts_at.slice(0, 5)}` : "Agenda não cadastrada"}</b></div> : <EmptyState title="Turma não vinculada" text="Fale com o professor para confirmar seus horários." />}
         </section>
         <section className="panel-card"><div className="panel-heading"><div><h3><ClipboardCheck size={18} />Suas presenças</h3><p>Histórico de chamadas registradas</p></div></div>
           {attendance.slice(0, 8).map((item) => <div className="portal-history" key={item.id}><span>{item.class_date.split("-").reverse().join("/")}</span><StatusTag status={item.status} /></div>)}
@@ -942,7 +944,7 @@ function ClassesPage({ data, today, activeStudents, canManage, formOpen, setForm
   addClass: (event: FormEvent<HTMLFormElement>) => void; onOpenAttendance: (id: string) => void;
 }) {
   return <section className="content-section">
-    <SectionHeading title="Turmas" subtitle="Níveis, horários, capacidade e ocupação">
+    <SectionHeading title="Turmas" subtitle={data.classes.some((item) => item.weekdays.length > 0 && item.starts_at) ? "Níveis, horários, capacidade e ocupação" : "Lista de turmas"}>
       {canManage && <button className="primary-button" onClick={() => setFormOpen(!formOpen)}><Plus size={18} />Nova turma</button>}
     </SectionHeading>
     {formOpen && <form className="form-card form-grid" onSubmit={addClass}>
@@ -958,10 +960,10 @@ function ClassesPage({ data, today, activeStudents, canManage, formOpen, setForm
       const used = Math.min(item.capacity, regular + reservedMakeups + reservedTrial);
       const isToday = item.weekdays.includes(new Date(`${today}T00:00:00Z`).getUTCDay());
       return <article className="class-card" key={item.id}><div className="class-card-top"><span className="class-icon"><Dumbbell size={21} /></span><span className="status-tag neutral">{item.level}</span></div><h3>{item.name}</h3>
-        <p><CalendarDays size={16} />{item.weekdays.map((day) => dayLabels[day]).join(", ") || "Sem dias"} · {item.starts_at.slice(0, 5)}</p>
-        <div className="capacity-label"><span>Ocupação</span><strong>{used}/{item.capacity}</strong></div><div className="capacity-track"><span style={{ width: `${Math.min(100, used / item.capacity * 100)}%` }} /></div>
-        <p className="available">{Math.max(0, item.capacity - used)} vagas disponíveis</p>
-        <button className="secondary-button full-width" disabled={!isToday} onClick={() => onOpenAttendance(item.id)}>{isToday ? "Abrir chamada" : "Fora da agenda de hoje"} <ChevronRight size={16} /></button>
+        {item.weekdays.length > 0 && item.starts_at && <p><CalendarDays size={16} />{item.weekdays.map((day) => dayLabels[day]).join(", ")} · {item.starts_at.slice(0, 5)}</p>}
+        {item.capacity > 0 && <><div className="capacity-label"><span>Ocupação</span><strong>{used}/{item.capacity}</strong></div><div className="capacity-track"><span style={{ width: `${Math.min(100, used / item.capacity * 100)}%` }} /></div></>}
+        {item.capacity > 0 && <p className="available">{Math.max(0, item.capacity - used)} vagas disponíveis</p>}
+        {item.weekdays.length > 0 && item.starts_at && <button className="secondary-button full-width" disabled={!isToday} onClick={() => onOpenAttendance(item.id)}>{isToday ? "Abrir chamada" : "Fora da agenda de hoje"} <ChevronRight size={16} /></button>}
       </article>;
     })}</div>
   </section>;
@@ -1148,7 +1150,7 @@ function ReportsPage({ data, balances, exportCsv }: {
     <div className="panel-card report-occupancy"><div className="panel-heading"><div><h3>Ocupação das turmas</h3><p>Alunos ativos ÷ capacidade cadastrada</p></div></div>
       {data.classes.filter((item) => classId === "all" || item.id === classId).map((item) => {
         const count = data.students.filter((student) => student.class_id === item.id && student.status === "active" && !student.archived_at).length;
-        return <div className="occupancy-row" key={item.id}><span>{item.name}<small>{item.level}</small></span><div className="capacity-track"><span style={{ width: `${Math.min(100, count / item.capacity * 100)}%` }} /></div><strong>{count}/{item.capacity}</strong></div>;
+        return <div className="occupancy-row" key={item.id}><span>{item.name}<small>{item.level}</small></span>{item.capacity > 0 ? <><div className="capacity-track"><span style={{ width: `${Math.min(100, count / item.capacity * 100)}%` }} /></div><strong>{count}/{item.capacity}</strong></> : <strong>—</strong>}</div>;
       })}
     </div>
   </section>;
