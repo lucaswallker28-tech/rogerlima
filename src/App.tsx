@@ -959,7 +959,7 @@ function ClassesPage({ data, today, activeStudents, canManage, formOpen, setForm
       const reservedTrial = data.experiments.filter((entry) => entry.class_id === item.id && entry.scheduled_for?.slice(0, 10) === today && ["scheduled", "attended"].includes(entry.status)).length;
       const used = Math.min(item.capacity, regular + reservedMakeups + reservedTrial);
       const isToday = item.weekdays.includes(new Date(`${today}T00:00:00Z`).getUTCDay());
-      return <article className="class-card" key={item.id}><div className="class-card-top"><span className="class-icon"><Dumbbell size={21} /></span><span className="status-tag neutral">{item.level}</span></div><h3>{item.name}</h3>
+      return <article className="class-card" key={item.id}><div className="class-card-top"><span className="class-icon"><Dumbbell size={21} /></span>{(item.weekdays.length > 0 || item.starts_at) && <span className="status-tag neutral">{item.level}</span>}</div><h3>{item.name}</h3>
         {item.weekdays.length > 0 && item.starts_at && <p><CalendarDays size={16} />{item.weekdays.map((day) => dayLabels[day]).join(", ")} · {item.starts_at.slice(0, 5)}</p>}
         {item.capacity > 0 && <><div className="capacity-label"><span>Ocupação</span><strong>{used}/{item.capacity}</strong></div><div className="capacity-track"><span style={{ width: `${Math.min(100, used / item.capacity * 100)}%` }} /></div></>}
         {item.capacity > 0 && <p className="available">{Math.max(0, item.capacity - used)} vagas disponíveis</p>}
