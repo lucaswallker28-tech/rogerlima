@@ -403,7 +403,7 @@ export default function App() {
 
   const markAttendance = async (studentId: string, classId: string, status: string) => {
     if (!requireSupabase()) return;
-    const { data: authData } = await supabase.auth.getUser();
+    const client = supabase; if (!client) return; const { data: authData } = await client.auth.getUser();
     await mutate(async () => {
       const { error: upsertError } = await supabase!.from("attendance").upsert({
         student_id: studentId, class_id: classId, class_date: today, status, marked_by: authData.user?.id,
@@ -414,7 +414,7 @@ export default function App() {
 
   const markAllPresent = async (classId: string) => {
     if (!requireSupabase()) return;
-    const { data: authData } = await supabase.auth.getUser();
+    const client = supabase; if (!client) return; const { data: authData } = await client.auth.getUser();
     const roster = activeStudents.filter((student) => student.class_id === classId && student.status === "active");
     const marked = new Set(data.attendance.filter((row) => row.class_id === classId && row.class_date === today).map((row) => row.student_id));
     const rows = roster.filter((student) => !marked.has(student.id)).map((student) => ({
@@ -470,7 +470,7 @@ export default function App() {
     const balance = currentBalance(selectedPayment);
     const amount = moneyInputToCents(paymentAmount);
     if (amount <= 0 || amount > balance) { setError("Informe um valor maior que zero e não superior ao saldo."); return; }
-    const { data: authData } = await supabase.auth.getUser();
+    const client = supabase; if (!client) return; const { data: authData } = await client.auth.getUser();
     const result = await mutate(async () => {
       const { error: insertError } = await supabase!.from("payments").insert({
         charge_id: selectedPayment.id, amount_cents: amount, paid_at: today, method: "manual", received_by: authData.user?.id,
@@ -492,7 +492,7 @@ export default function App() {
       setError(kind === "cancel" ? "Para cancelar, informe o saldo total em aberto." : "O ajuste deve ser maior que zero e não superior ao saldo.");
       return;
     }
-    const { data: authData } = await supabase.auth.getUser();
+    const client = supabase; if (!client) return; const { data: authData } = await client.auth.getUser();
     const result = await mutate(async () => {
       const { error: insertError } = await supabase!.from("charge_adjustments").insert({
         charge_id: adjustmentCharge.id, kind, amount_cents: amount,
