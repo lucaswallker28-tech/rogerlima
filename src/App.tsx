@@ -67,7 +67,7 @@ const inputDate = () => todayInGoiania();
 const publicAsset = (path: string) => /^https?:\/\//i.test(path)
   ? path
   : `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
-const brandCover = publicAsset(import.meta.env.VITE_BRAND_COVER || "brand/roger-lima-cover.jpg");
+const brandCover = publicAsset(import.meta.env.VITE_BRAND_COVER || "brand/roger-lima-cover.png");
 const brandLogo = publicAsset(import.meta.env.VITE_BRAND_LOGO || "brand/roger-lima-logo.png");
 
 function moneyInputToCents(value: string) {
