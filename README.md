@@ -34,7 +34,7 @@ Nunca use a chave `service_role` no navegador, no `.env` com prefixo `VITE_`, ne
 
 ## Marca e implantação
 
-A foto de fundo enviada está instalada e é usada no login e nos cabeçalhos com degradê para preservar a leitura. O logotipo oficial ainda não está no projeto. O logotipo oficial ainda não está no projeto; adicione-o em `public/brand/roger-lima-logo.png`. Os caminhos podem ser alterados em `.env.local`. Sem o logotipo, a tela usa a marca textual. Não publique informações pessoais nem credenciais em repositório público.
+A foto de fundo enviada está instalada e é usada no login e nos cabeçalhos com degradê para preservar a leitura. O logotipo oficial ainda não está no projeto; adicione-o em `public/brand/roger-lima-logo.png`. Os caminhos podem ser alterados em `.env.local`. Sem o logotipo, a tela usa a marca textual. Não publique informações pessoais nem credenciais em repositório público.
 
 Para publicar no GitHub Pages, ative Pages com fonte GitHub Actions e configure as variáveis de repositório `ENABLE_PAGES=true`, `SUPABASE_URL` e `SUPABASE_ANON_KEY`. O workflow `.github/workflows/pages.yml` testa e compila em cada atualização; o job de publicação só roda com `ENABLE_PAGES=true` e Pages configurado. A URL e a chave publishable/anon são públicas por natureza; nunca use `service_role` ou segredos em variáveis `VITE_`. Não envie `.env.local`.
 
