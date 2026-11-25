@@ -34,7 +34,7 @@ Nunca use a chave `service_role` no navegador, no `.env` com prefixo `VITE_`, ne
 
 ## Marca e implantação
 
-A foto de fundo enviada está instalada e é usada no login e nos cabeçalhos com degradê para preservar a leitura. O logotipo oficial ainda não está no projeto. Adicione imagens autorizadas em `public/brand/roger-lima-cover.png` e `public/brand/roger-lima-logo.png`; os caminhos podem ser alterados em `.env.local`. Sem esses arquivos, a tela usa o fundo escuro com marca textual. Não publique informações pessoais nem credenciais em repositório público.
+A foto de fundo enviada está instalada e é usada no login e nos cabeçalhos com degradê para preservar a leitura. O logotipo oficial ainda não está no projeto. O logotipo oficial ainda não está no projeto; adicione-o em `public/brand/roger-lima-logo.png`. Os caminhos podem ser alterados em `.env.local`. Sem o logotipo, a tela usa a marca textual. Não publique informações pessoais nem credenciais em repositório público.
 
 Para publicar no GitHub Pages, ative Pages com fonte GitHub Actions e configure as variáveis de repositório `ENABLE_PAGES=true`, `SUPABASE_URL` e `SUPABASE_ANON_KEY`. O workflow `.github/workflows/pages.yml` testa e compila em cada atualização; o job de publicação só roda com `ENABLE_PAGES=true` e Pages configurado. A URL e a chave publishable/anon são públicas por natureza; nunca use `service_role` ou segredos em variáveis `VITE_`. Não envie `.env.local`.
 
@@ -44,7 +44,7 @@ Para publicar no GitHub Pages, ative Pages com fonte GitHub Actions e configure 
 - Alunos, turmas, chamada, mensalidades manuais, pagamentos parciais, descontos, isenções, reversões, experimentais, conversão e exportação CSV.
 - O status financeiro é calculado a partir do saldo e da data no fuso de Goiânia. Competência e data de pagamento são campos separados.
 - Lembretes por WhatsApp apenas abrem a mensagem para revisão/envio pelo professor. Não há cobrança Pix nem envio automático.
-- A demonstração é fictícia, em memória e somente leitura. Não há contas reais da equipe, imagens oficiais, projeto Supabase ou credenciais fornecidos; configure-os antes de usar dados de produção.
+- A demonstração é fictícia, em memória e somente leitura. Não há contas reais da equipe, logotipo oficial, projeto Supabase ou credenciais fornecidos; configure-os antes de usar dados de produção.
 
 ## Backup
 
